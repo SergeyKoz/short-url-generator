@@ -1,0 +1,15 @@
+.has-error label {
+    color: #D84315;
+}
+
+.has-error .form-control {
+    border-color: #D84315;
+}
+
+.has-error .message-block {
+    color: #D84315;
+}
+
+.generated {
+    float: right;
+}

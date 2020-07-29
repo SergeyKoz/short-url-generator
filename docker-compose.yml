@@ -1,0 +1,64 @@
+version: '3'
+services:
+
+  #PHP Service
+  app:
+    build:
+      context: .docker/php
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www
+    container_name: url-gen-app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: url-gen-net
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    networks:
+      - url-gen-net
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: url-gen-nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www
+      - ./.docker/nginx/:/etc/nginx/conf.d/
+    networks:
+      - url-gen-net
+
+  #MySQL Service
+  db:
+    image: mysql:latest
+    container_name: url-gen-db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: url-gen-db
+      MYSQL_ROOT_PASSWORD: dev
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - url-gen-net
+
+  node:
+    image: node:10
+    container_name: url-gen-node
+    stdin_open: true
+    volumes:
+      - ./:/var/www
+    networks:
+      - url-gen-net
+
+#Docker Networks
+networks:
+  url-gen-net:
+    driver: bridge
