@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTransferObjects\UrlRequestData;
 use App\Http\Requests\GenerateUrlRequest;
 use App\Interfaces\UrlServiceInterface;
-use App\Url;
+use Illuminate\Support\MessageBag;
 
 class UrlController extends Controller
 {
@@ -18,18 +18,18 @@ class UrlController extends Controller
 
     public function index()
     {
-        return view('url.index', ['url' => new Url()]);
+        return view('url.index');
     }
 
-    public function create(GenerateUrlRequest $request)
+    public function create(GenerateUrlRequest $request, MessageBag $message_bag)
     {
         $requestData = UrlRequestData::fromRequest($request);
-
         try {
             $url = $this->urlService->generate($requestData);
         } catch (\Throwable $exception) {
-            echo $exception->getMessage();
+            $message_bag->add('url', $exception->getMessage());
+            return view('url.index')->withErrors($message_bag);
         }
-        return view('url.index', ['url' => $url]);
+        return redirect()->to('/')->with('hash', $url->hash);
     }
 }

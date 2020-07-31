@@ -17,6 +17,7 @@ Create and config file `.env` from `.env.examle`
 
 - Run and init containers
 ```bash
+chmod -R o+w storage
 docker-compose up
 docker exec url-gen-app /bin/sh -lc "composer install"
 docker exec url-gen-app /bin/sh -lc "php artisan migrate"

@@ -2,9 +2,22 @@
 
 @section('content')
 
+<?php
+    $url = $url ?? new App\Url();
+?>
+
 <div class="jumbotron">
     <h1 class="display-4 text-center">Short URL generator</h1>
     <hr>
+    @if (session('hash'))
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <a href="{{ url('/', session('hash')) }}" class="h2" target="_blank">{{ url('/', session('hash')) }}</a>
+            </div>
+        </div>
+        <hr>
+    @endif
+
     <div class="row justify-content-center">
         <div class="col-md-4">
         {{ Form::open(['action' => 'UrlController@create', 'method' => 'post']) }}
@@ -39,16 +52,12 @@
 
         <div class="form-group">
             {{ Form::submit('Generate', ['class' => 'btn btn-primary']) }}
-
-            @if ($url->id > 0)
-                <a href="{{ url('/', $url->hash) }}" class="h2 generated" target="_blank">{{ url('/', $url->hash) }}</a>
-            @endif
         </div>
 
         {{ Form::close() }}
         </div>
     </div>
-</div>
+</>
 
 @endsection
 
